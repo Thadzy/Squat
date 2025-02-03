@@ -26,16 +26,16 @@ def create_hitting_machine():
                            baseVisualShapeIndex=arm_vis, basePosition=[0, 0, 0.3])
 
     # Create revolute joint between base and arm
-    constraint = p.createConstraint(base, -1, arm, -1,  # Issue: Possibly incorrect joint setup
-                                   p.JOINT_REVOLUTE, [0, 0, 1],  # Should be JOINT_REVOLUTE instead of PRISMATIC
-                                   [0, 0, 0.3], [0, 0, 0])
+    constraint = p.createConstraint(base, -1, arm, -1, 
+                                   p.JOINT_REVOLUTE, [0, 0, 1], 
+                                   [0, 0, 0.1], [0, 0, 0.3])
     
     p.changeConstraint(constraint, maxForce=500)
 
     return base, arm, constraint  # Ensure it returns three values
 
 # Create objects
-machine_base, machine_arm = create_hitting_machine()
+machine_base, machine_arm, machine_joint = create_hitting_machine()
 
 # Get joint index
 joint_index = 0  # First (and only) joint of the arm
@@ -57,7 +57,6 @@ def create_squash_ball():
     return ball
 
 # Create objects
-machine_base, machine_arm, machine_joint = create_hitting_machine()
 ball = create_squash_ball()
 
 # Control parameters
@@ -74,8 +73,8 @@ while True:
         current_angle -= angle_increment
         
     # Apply angle to machine
-    p.setJointMotorControl2(bodyUniqueId=machine_base,
-                           jointIndex=machine_joint,
+    p.setJointMotorControl2(bodyUniqueId=machine_arm,
+                           jointIndex=joint_index,
                            controlMode=p.POSITION_CONTROL,
                            targetPosition=current_angle)
     
